@@ -5,13 +5,24 @@ class Bot:
 
     def __init__(self):
 
-        self.bot = telebot.Telebot(config.token)
+        self.bot = telebot.TeleBot(config.token)
     
     def mainloop(self):
 
-        @bot.message_handler(commands=['start', 'help'])
+        @self.bot.message_handler(commands=['start', 'help', 'id'])
         def send_welcome(message):
-            bot.reply_to(message, "Howdy, how are you doing?")  
+            print(message)
+            if message == "/start":
+                self.bot.send_message(message.from_user.id, "Здравствуйте, рады привествовать вас в боте!")
+            elif message == "/help":
+                self.bot.send_message(message.from_user.id, "Если есть вопросы/предложения, пешите @vladislav_ain")
+            elif message == '/id':
+                self.bot.send_message(message.from_user.id, f"Ваш id {str(message.from_user.id)}")    
 
 
-        self.bot.mainloop()
+        self.bot.polling()
+
+
+if __name__ == '__main__':
+    bot = Bot()
+    bot.mainloop()
