@@ -1,59 +1,59 @@
-make:Apple
-model:iPhone XS Max
-orientation:Orientation.RIGHT_TOP
-x_resolution:72.0
-y_resolution:72.0
-resolution_unit:ResolutionUnit.INCHES
-software:14.3
-datetime:2021:03:23 03:39:50
-y_and_c_positioning:1
-_exif_ifd_pointer:258
-_gps_ifd_pointer:2118
-exposure_time:0.02
-f_number:1.8
-exposure_program:ExposureProgram.NORMAL_PROGRAM
-photographic_sensitivity:160
-exif_version:0232
-datetime_original:2021:03:23 03:39:50
-datetime_digitized:2021:03:23 03:39:50
-offset_time:+03:00
-offset_time_original:+03:00
-offset_time_digitized:+03:00
+make:<class 'str'>
+model:<class 'str'>
+orientation:<enum 'Orientation'>
+x_resolution:<class 'float'>
+y_resolution:<class 'float'>
+resolution_unit:<enum 'ResolutionUnit'>
+software:<class 'str'>
+datetime:<class 'str'>
+y_and_c_positioning:<class 'int'>
+_exif_ifd_pointer:<class 'int'>
+_gps_ifd_pointer:<class 'int'>
+exposure_time:<class 'float'>
+f_number:<class 'float'>
+exposure_program:<enum 'ExposureProgram'>
+photographic_sensitivity:<class 'int'>
+exif_version:<class 'str'>
+datetime_original:<class 'str'>
+datetime_digitized:<class 'str'>
+offset_time:<class 'str'>
+offset_time_original:<class 'str'>
+offset_time_digitized:<class 'str'>
 components_configuration:cannot get it
-shutter_speed_value:5.644289067083903
-aperture_value:1.6959938128383605
-brightness_value:2.191511039585046
-exposure_bias_value:0.0
-metering_mode:MeteringMode.PATTERN
-flash:Flash(flash_fired=False, flash_return=FlashReturn.NO_STROBE_RETURN_DETECTION_FUNCTION, flash_mode=FlashMode.AUTO_MODE, flash_function_not_present=False, red_eye_reduction_supported=False, reserved=0)
-focal_length:4.25
-subject_area:0
+shutter_speed_value:<class 'float'>
+aperture_value:<class 'float'>
+brightness_value:<class 'float'>
+exposure_bias_value:<class 'float'>
+metering_mode:<enum 'MeteringMode'>
+flash:<class 'exif._datatypes.Flash'>
+focal_length:<class 'float'>
+subject_area:<class 'int'>
 maker_note:cannot get it
-subsec_time_original:101
-subsec_time_digitized:101
+subsec_time_original:<class 'str'>
+subsec_time_digitized:<class 'str'>
 flashpix_version:cannot get it
-color_space:ColorSpace.UNCALIBRATED
-pixel_x_dimension:4032
-pixel_y_dimension:3024
-sensing_method:SensingMethod.ONE_CHIP_COLOR_AREA_SENSOR
+color_space:<enum 'ColorSpace'>
+pixel_x_dimension:<class 'int'>
+pixel_y_dimension:<class 'int'>
+sensing_method:<enum 'SensingMethod'>
 scene_type:cannot get it
-exposure_mode:ExposureMode.AUTO_EXPOSURE
-white_balance:WhiteBalance.AUTO
-focal_length_in_35mm_film:26
-scene_capture_type:SceneCaptureType.STANDARD
-lens_specification:(4.25, 6.0, 1.8, 2.4)
-lens_make:Apple
-lens_model:iPhone XS Max back dual camera 4.25mm f/1.8
-gps_latitude_ref:N
-gps_latitude:(55.0, 40.0, 51.64)
-gps_longitude_ref:E
-gps_longitude:(37.0, 8.0, 15.02)
-gps_altitude_ref:GpsAltitudeRef.ABOVE_SEA_LEVEL
-gps_altitude:191.0358620689655
-gps_speed_ref:K
-gps_speed:0.0
-gps_img_direction_ref:T
-gps_img_direction:13.244353298123384
-gps_dest_bearing_ref:T
-gps_dest_bearing:13.244353298123384
-gps_horizontal_positioning_error:65.0
+exposure_mode:<enum 'ExposureMode'>
+white_balance:<enum 'WhiteBalance'>
+focal_length_in_35mm_film:<class 'int'>
+scene_capture_type:<enum 'SceneCaptureType'>
+lens_specification:<class 'tuple'>
+lens_make:<class 'str'>
+lens_model:<class 'str'>
+gps_latitude_ref:<class 'str'>
+gps_latitude:<class 'tuple'>
+gps_longitude_ref:<class 'str'>
+gps_longitude:<class 'tuple'>
+gps_altitude_ref:<enum 'GpsAltitudeRef'>
+gps_altitude:<class 'float'>
+gps_speed_ref:<class 'str'>
+gps_speed:<class 'float'>
+gps_img_direction_ref:<class 'str'>
+gps_img_direction:<class 'float'>
+gps_dest_bearing_ref:<class 'str'>
+gps_dest_bearing:<class 'float'>
+gps_horizontal_positioning_error:<class 'float'>

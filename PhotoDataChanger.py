@@ -51,10 +51,10 @@ class ImageEditor:
         exit_str = ''
         for i in image_data.list_all():
             try:  # it a[1] value
-                exit_str += str(i) + ':' + str(image_data[i]) + '\n'
+                exit_str += str(i) + ':' + str(type(image_data[i])) + '\n'
             except:
                 try:  # it also can be a.1 value
-                    exit_str += str(i) + ':' + str(image_data.i) + '\n'
+                    exit_str += str(i) + ':' + str(type(image_data.i)) + '\n'
                 except:  # idk what to do then
                     exit_str += str(i) + ':' + 'cannot get it' + '\n'
         #  write all the data to txt file to watch it then
@@ -63,3 +63,7 @@ class ImageEditor:
 
     def _return_error(self, answer):
         print(f'Here is error {answer}')  # TODO replace with error image with explonation
+
+if __name__ == '__main__':
+    changer = ImageEditor('my_test1.JPG')
+    changer._test_print_values(changer._image_data())
