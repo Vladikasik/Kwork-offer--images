@@ -30,7 +30,7 @@ class ImageEditor:
             image_data = self._image_data()
             image_data = self._edit_gps(image_data)
             self.log.loaded(self.filename)
-            self._test_print_values(image_data)
+            pass
         except Exception as ex:  # if something wrong with loading image
             self._return_error(answer=str(ex))
 
