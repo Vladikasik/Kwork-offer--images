@@ -15,7 +15,7 @@ x_1 = randint(-num, num)
 pre_x_2 = int((num**2 - x_1 ** 2)**0.5)
 x_2 = randint(-pre_x_2, pre_x_2)
 
-a_1 = a + x_1*(0.000008984/cos(radians(a)))
+a_1 = a + x_1*0.000008984
 b_1 = b + x_2*0.000008998
 
 print()
