@@ -98,15 +98,36 @@ class Bot:
                                                     make_settings)  # waiting for next message with settings
                 # messsage with setting is processed in make_settings()
             elif message.text == '/photo':
+
                 settings_info = self.db.get_user_settings(message.from_user.id)
-                if self.db.get_balance() > 0:
+
+                # to say fuck off if something wrong
+                if self.db.get_balance(message.from_user.id) > 0:
                     if settings_info:
                         data = self.db.get_user_settings(message.from_user.id)
                         pre_coordinates = data['coordinates']
                         metres = data['raszbros']
-                        coordinates = [tuple([float(i) for i in i.replace('(', '').replace(')', '').split(', ')]) for i in pre_coordinates.split('_')]
-                        gps = GPS(coordinates, metres)
-                        self.bot.send_message(message.chat.id, "")
+                        try:
+                            coordinates = [tuple([float(i) for i in i.replace('(', '').replace(')', '').split(', ')])
+                                           for i in pre_coordinates.split('_')]
+                            gps = GPS(coordinates, metres)
+                            self.bot.send_message(message.chat.id, "Осталось совсем чуть-чуть\n"
+                                                                   "Просто введите как вы хотите изменить время\n\n"
+                                                                   "Пример\n"
+                                                                   "-1 0 3\n"
+                                                                   "что означает изменить время на\n"
+                                                                   "оригинальное минус 1 сутки 0 часов 3 минуты\n\n"
+                                                                   "+0 2 5\n"
+                                                                   "что означает изменить время на\n"
+                                                                   "оригинальное плюс 0 суток 2 часа 5 минут\n\n"
+                                                                   "Пожалуйста учтите что писать нули нужно ОБЯЗАТЕЛЬНО "
+                                                                   "для корректной работы программы")
+                        except Exception as ex:
+                            self.bot.send_message(message.chat.id, "Извините, проболема в считывании координат, "
+                                                                   "скорее всего вы где-то ошиблись.\n"
+                                                                   "Попробуйте заново настроить gps\n"
+                                                                   "Просто напишите /latlon для настройки gps")
+
                     else:
                         self.bot.send_message(message.chat.id,
                                               "Извините, но для отправки фото вам сначала нужно заполнить "
