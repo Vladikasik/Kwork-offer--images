@@ -13,6 +13,18 @@ class Bot:
 
     def mainloop(self):
 
+        # function need to be declareted Before you use it in next_step_handler
+        def make_settings(message):
+
+            if message.text == '1':
+                pass
+            elif message.text == '2':
+                pass
+            else:
+                msg = self.bot.send_message(message.chat.id, "Вы ввели неправильную цифру\n"
+                                                             "Попробуйте ещё раз")
+                self.bot.register_next_step_handler(msg, make_settings)
+
         @self.bot.message_handler(commands=['start', 'help', 'balance', 'settings'])
         def send_welcome(message):
             if message.text == "/start":
@@ -34,12 +46,19 @@ class Bot:
                 to_register = self.bot.send_message(message.chat.id,
                                                     "Вы зашли в меню настройки изменения координат в метаданных\n"
                                                     "Напишите /start чтобы выйти в главное меню\n\n"
-                                                    "Напишите 1 если вы хотите указать предел разброса координат\n"
-                                                    "Напишите 2 если вы хотите указать конкретные координаты\n\n"
+                                                    "Напишите сначала исходные координаты потом разброс\n\n"
+                                                    "Пример:\n"
+                                                    "(55.0, 40.0, 51.64) (37.0, 8.0, 15.02) 25\n"
+                                                    "где (55.0, 40.0, 51.64) широта\n"
+                                                    "где (37.0, 8.0, 15.02) долгота\n"
+                                                    "где 25 это разброс в метрах\n\n"
+                                                    "Пожалуйста, проверьте ещё раз ваше сообщение перед отправлением, "
+                                                    "если вы что-либо заполнили неправильно, при отправке фотографии, "
+                                                    "вам напишут что у вас ошибка в введеных данных\n"
+                                                    "В таком случае, перейдите обратно в настройки и попробуйте ещё раз\n"
                                                     "Всё что вы сейчас настроите, будет применятся ко всем "
                                                     "фотографиям, пока вы снова не поменяете настройки")
-                self.db.write_settings_exact(message.from_user.id, coordinates=None)
-                self.bot.register_next_step_handler(to_register)
+                self.bot.register_next_step_handler(to_register, make_settings)
 
         @self.bot.callback_query_handler(func=lambda call: True)
         def buttons(call):
