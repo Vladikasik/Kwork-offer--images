@@ -2,6 +2,7 @@ import telebot
 import config
 from telebot import types
 from DatabaseConfig import Database
+from GpsEditor import GPS
 
 
 class Bot:
@@ -23,7 +24,7 @@ class Bot:
                     if params[0].startswith('(') and params[0].endswith(')') \
                             and params[1].startswith('(') and params[1].endswith(')'):
                         if params[2].isdigit():
-                            coordinates = params[0] + ' ' + params[1]
+                            coordinates = params[0] + '_' + params[1]
                             self.db.write_settings_exact(message.from_user.id, coordinates,
                                                          params[2])  # params[2] is metres
                             self.bot.send_message(message.chat.id, "Мы записали ваши настройки\n"
@@ -98,13 +99,25 @@ class Bot:
                 # messsage with setting is processed in make_settings()
             elif message.text == '/photo':
                 settings_info = self.db.get_user_settings(message.from_user.id)
-                if not settings_info:
-                    self.bot.send_message(message.chat.id, 'Извините, но для отправки фото вам сначала нужно заполнить '
-                                                           'настройки gps по умолчанию.\n'
-                                                           'Сделать это можно написав команду /latlon')
+                if self.db.get_balance() > 0:
+                    if settings_info:
+                        data = self.db.get_user_settings(message.from_user.id)
+                        pre_coordinates = data['coordinates']
+                        metres = data['raszbros']
+                        coordinates = [tuple([float(i) for i in i.replace('(', '').replace(')', '').split(', ')]) for i in pre_coordinates.split('_')]
+                        gps = GPS(coordinates, metres)
+                        self.bot.send_message(message.chat.id, "")
+                    else:
+                        self.bot.send_message(message.chat.id,
+                                              "Извините, но для отправки фото вам сначала нужно заполнить "
+                                              "настройки gps по умолчанию.\n"
+                                              "Сделать это можно написав команду /latlon")
+                else:
+                    self.bot.send_message(message.chat.id, "Извините, у вас недостаточно токенов на балансе.\n"
+                                                           "Напишите /balance для пополнения")
             else:
-                self.bot.send_message(message.chat.id, 'Извините, я вас не понимаю\n'
-                                                       'Напишите /start для навигации по боту')
+                self.bot.send_message(message.chat.id, "Извините, я вас не понимаю\n"
+                                                       "Напишите /start для навигации по боту")
 
         self.bot.polling()
 
