@@ -15,7 +15,7 @@ class Bot:
     def mainloop(self):
 
         # function need to be declareted Before you use it in next_step_handler
-        def make_settings(message):
+        def make_gps(message):
             params = message.text.split('_')
 
             if message.text != '/start':  # to let people exit from settings
@@ -45,6 +45,28 @@ class Bot:
                                                                  "нижним подчеркиванием '_'\n"
                                                                  "Попробуйте ещё раз")
                     self.bot.register_next_step_handler(msg, make_settings)  # recursion
+
+        def make_photo(message):
+            if message.text.startswith('+') or message.text.startswith('-'):
+                if len(message.text.split(' ')) == 3:
+                    edit_to =
+                else:
+                    msg = self.bot.send_message(message.chat.id, "Вы неправильно ввели изменение времени\n"
+                                                                 "Данный параметр разделен на 3 пункта ПРОБЕЛАМИ\n"
+                                                                 "Первый пункт +5 или -5 часов\n"
+                                                                 "Второй пункт через пробел - кол-во минут\n"
+                                                                 "Третий пункт через пробел - кол-во секунд\n"
+                                                                 "Попробуйте ещё раз")
+                    self.bot.register_next_step_handler(msg, make_photo)  # recursion
+            else:
+                msg = self.bot.send_message(message.chat.id, "Вы неправильно ввели изменение времени\n"
+                                                             "Данный параметр должен начинаться\n"
+                                                             "Либо с минуса -\n"
+                                                             "Либо с плюса +\n"
+                                                             "В зависимости от того, прибавляете вы или "
+                                                             "отнимаете время от оригинала\n"
+                                                             "Попробуйте ещё раз")
+                self.bot.register_next_step_handler(msg, make_photo)  # recursion
 
         @self.bot.message_handler(commands=['start', 'help', 'balance', 'photo', 'latlon', 'zip'])
         def send_welcome(message):
@@ -95,7 +117,7 @@ class Bot:
                                                     "Извините за неудобства в найтроке. В ближайшее время мы сделаем"
                                                     "процесс настройке гараздо легче.")
                 self.bot.register_next_step_handler(to_register,
-                                                    make_settings)  # waiting for next message with settings
+                                                    make_gps)  # waiting for next message with settings
                 # messsage with setting is processed in make_settings()
             elif message.text == '/photo':
 
@@ -111,30 +133,31 @@ class Bot:
                             coordinates = [tuple([float(i) for i in i.replace('(', '').replace(')', '').split(', ')])
                                            for i in pre_coordinates.split('_')]
                             gps = GPS(coordinates, metres)
-                            self.bot.send_message(message.chat.id, "Осталось совсем чуть-чуть\n"
-                                                                   "Просто введите как вы хотите изменить время\n\n"
-                                                                   "Пример\n"
-                                                                   "-1 0 3\n"
-                                                                   "что означает изменить время на\n"
-                                                                   "оригинальное минус 1 сутки 0 часов 3 минуты\n\n"
-                                                                   "+0 2 5\n"
-                                                                   "что означает изменить время на\n"
-                                                                   "оригинальное плюс 0 суток 2 часа 5 минут\n\n"
-                                                                   "Пожалуйста учтите что писать нули нужно ОБЯЗАТЕЛЬНО "
-                                                                   "для корректной работы программы")
+                            msg = self.bot.send_message(message.chat.id, "Осталось совсем чуть-чуть\n"
+                                                                         "Просто введите как вы хотите изменить время\n\n"
+                                                                         "Пример\n"
+                                                                         "-1 0 3\n"
+                                                                         "что означает изменить время на\n"
+                                                                         "оригинальное минус 1 сутки 0 часов 3 минуты\n\n"
+                                                                         "+0 2 5\n"
+                                                                         "что означает изменить время на\n"
+                                                                         "оригинальное плюс 0 суток 2 часа 5 минут\n\n"
+                                                                         "Пожалуйста учтите что писать нули нужно ОБЯЗАТЕЛЬНО "
+                                                                         "для корректной работы программы")
+                            self.bot.register_next_step_handler(msg, make_photo)
                         except Exception as ex:
-                            self.bot.send_message(message.chat.id, "Извините, проболема в считывании координат, "
+                            self.bot.send_message(message.chat.id, "Проболема в считывании координат, "
                                                                    "скорее всего вы где-то ошиблись.\n"
                                                                    "Попробуйте заново настроить gps\n"
                                                                    "Просто напишите /latlon для настройки gps")
 
                     else:
                         self.bot.send_message(message.chat.id,
-                                              "Извините, но для отправки фото вам сначала нужно заполнить "
+                                              "Для отправки фото вам сначала нужно заполнить "
                                               "настройки gps по умолчанию.\n"
                                               "Сделать это можно написав команду /latlon")
                 else:
-                    self.bot.send_message(message.chat.id, "Извините, у вас недостаточно токенов на балансе.\n"
+                    self.bot.send_message(message.chat.id, "У вас недостаточно токенов на балансе.\n"
                                                            "Напишите /balance для пополнения")
             else:
                 self.bot.send_message(message.chat.id, "Извините, я вас не понимаю\n"

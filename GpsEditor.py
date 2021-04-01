@@ -41,8 +41,3 @@ class GPS:
         minu = string[1].replace("'", '') + '.0 '
         secu = string[2].replace('"', '') + ')'
         return degr + minu + secu
-
-
-if __name__ == '__main__':
-    gps = GPS([(55.0, 40.0, 51.64), (37.0, 8.0, 15.02)], 0)
-    print(gps._edit())

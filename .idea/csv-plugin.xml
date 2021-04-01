@@ -24,6 +24,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\TimeEditor.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\all_data.txt">
           <value>
             <Attribute>
