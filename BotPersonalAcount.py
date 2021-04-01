@@ -17,34 +17,35 @@ class Bot:
         def make_settings(message):
             params = message.text.split('_')
 
-            # trying to check all the requirements for params
-            if len(params) == 3:
-                if params[0].startswith('(') and params[0].endswith(')') and params[1].startswith('(') and params[
-                    1].endswith(')'):
-                    if params[2].isdigit():
-                        coordinates = params[0] + ' ' + params[1]
-                        self.db.write_settings_exact(message.from_user.id, coordinates,
-                                                     params[2])  # params[2] is metres
-                        self.bot.send_message(message.chat.id, "Мы записали ваши настройки\n"
-                                                               "Нажмите или напишите /start чтобы перейти в главное меню")
+            if message.text != '/start':  # to let people exit from settings
+                # trying to check all the requirements for params
+                if len(params) == 3:
+                    if params[0].startswith('(') and params[0].endswith(')') \
+                            and params[1].startswith('(') and params[1].endswith(')'):
+                        if params[2].isdigit():
+                            coordinates = params[0] + ' ' + params[1]
+                            self.db.write_settings_exact(message.from_user.id, coordinates,
+                                                         params[2])  # params[2] is metres
+                            self.bot.send_message(message.chat.id, "Мы записали ваши настройки\n"
+                                                                   "Нажмите или напишите /start чтобы перейти в главное меню")
+                        else:
+                            msg = self.bot.send_message(message.chat.id, "Мне кажется вы ввели что-то неправильно\n"
+                                                                         "Кажется разброс в метрах вы указали не как число\n"
+                                                                         "Попробуйте ещё раз")
+                            self.bot.register_next_step_handler(msg, make_settings)  # recursion
                     else:
                         msg = self.bot.send_message(message.chat.id, "Мне кажется вы ввели что-то неправильно\n"
-                                                                     "Кажется разброс в метрах вы указали не как число\n"
+                                                                     "Проверьте в каком формате вы ввели координаты\n"
                                                                      "Попробуйте ещё раз")
                         self.bot.register_next_step_handler(msg, make_settings)  # recursion
                 else:
                     msg = self.bot.send_message(message.chat.id, "Мне кажется вы ввели что-то неправильно\n"
-                                                                 "Проверьте в каком формате вы ввели координаты\n"
+                                                                 "Проверьте что вы разделили все 3 параметра "
+                                                                 "нижним подчеркиванием '_'\n"
                                                                  "Попробуйте ещё раз")
                     self.bot.register_next_step_handler(msg, make_settings)  # recursion
-            else:
-                msg = self.bot.send_message(message.chat.id, "Мне кажется вы ввели что-то неправильно\n"
-                                                             "Проверьте что вы разделили все 3 параметра "
-                                                             "нижним подчеркиванием '_'\n"
-                                                             "Попробуйте ещё раз")
-                self.bot.register_next_step_handler(msg, make_settings)  # recursion
 
-        @self.bot.message_handler(commands=['start', 'help', 'balance', 'settings'])
+        @self.bot.message_handler(commands=['start', 'help', 'balance', 'photo', 'latlon', 'zip'])
         def send_welcome(message):
             if message.text == "/start":
 
@@ -57,7 +58,8 @@ class Bot:
                 self.bot.send_message(message.chat.id,
                                       "/photo - для изменения данных о фотографии\n"
                                       "/balance - баланс и пополнение\n"
-                                      "/settings - изменение настроек по умолчанию")
+                                      "/latlon - изменение настроек gps по умолчанию\n"
+                                      "/zip - изменение настроек сжатия по умолчанию")
 
             elif message.text == "/help":
                 self.bot.send_message(message.chat.id, "Если есть вопросы/предложения, пешите @vladislav_ain")
@@ -65,12 +67,12 @@ class Bot:
             elif message.text == '/balance':
                 self.bot.send_message(message.chat.id, "Информация о балансе\n"
                                                        f"На вашем счету {self.db.get_balance(message.from_user.id)} токенов\n"
-                                                       "И тут какая-то муть с пополнением")
-            elif message.text == '/settings':
+                                                       "И тут какая-то муть с пополнением\n\n"
+                                                       "Напишите /start чтобы вернуться в меню")
+            elif message.text == '/latlon':
                 self.bot.send_message(message.chat.id, "Вы зашли в меню настройки изменения координат в метаданных\n"
                                                        "Напишите /start чтобы выйти в главное меню\n\n")
                 settings_info = self.db.get_user_settings(message.from_user.id)
-                print(settings_info)
                 if settings_info:
                     self.bot.send_message(message.chat.id, f"Ваши настройки сечас\n"
                                                            f"Координаты - {settings_info['coordinates']}\n"
@@ -94,6 +96,15 @@ class Bot:
                 self.bot.register_next_step_handler(to_register,
                                                     make_settings)  # waiting for next message with settings
                 # messsage with setting is processed in make_settings()
+            elif message.text == '/photo':
+                settings_info = self.db.get_user_settings(message.from_user.id)
+                if not settings_info:
+                    self.bot.send_message(message.chat.id, 'Извините, но для отправки фото вам сначала нужно заполнить '
+                                                           'настройки gps по умолчанию.\n'
+                                                           'Сделать это можно написав команду /latlon')
+            else:
+                self.bot.send_message(message.chat.id, 'Извините, я вас не понимаю\n'
+                                                       'Напишите /start для навигации по боту')
 
         self.bot.polling()
 
