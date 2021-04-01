@@ -37,6 +37,18 @@ class Database:
                                         }
         self._post_data(data)
 
+    def get_user_settings(self, user_id):
+
+        data = self._get_data()
+        user = [i for i in data if i['id'] == user_id][0]
+        try:
+            to_return = user['settings']['gps']
+            return to_return
+        except Exception as ex:
+            print(ex)
+            to_return = {}
+            return to_return
+
     def _get_data(self):
         with open(self.db_name, 'r') as file:
             data = json.load(file)

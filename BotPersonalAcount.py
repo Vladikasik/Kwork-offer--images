@@ -19,11 +19,14 @@ class Bot:
 
             # trying to check all the requirements for params
             if len(params) == 3:
-                if params[0].startswith('(') and params[0].endswith(')') and params[1].startswith('(') and params[1].endswith(')'):
+                if params[0].startswith('(') and params[0].endswith(')') and params[1].startswith('(') and params[
+                    1].endswith(')'):
                     if params[2].isdigit():
                         coordinates = params[0] + ' ' + params[1]
                         self.db.write_settings_exact(message.from_user.id, coordinates,
-                                                     params[3])  # params[3] is metres
+                                                     params[2])  # params[2] is metres
+                        self.bot.send_message(message.chat.id, "Мы записали ваши настройки\n"
+                                                               "Нажмите или напишите /start чтобы перейти в главное меню")
                     else:
                         msg = self.bot.send_message(message.chat.id, "Мне кажется вы ввели что-то неправильно\n"
                                                                      "Кажется разброс в метрах вы указали не как число\n"
@@ -64,9 +67,16 @@ class Bot:
                                                        f"На вашем счету {self.db.get_balance(message.from_user.id)} токенов\n"
                                                        "И тут какая-то муть с пополнением")
             elif message.text == '/settings':
+                self.bot.send_message(message.chat.id, "Вы зашли в меню настройки изменения координат в метаданных\n"
+                                                       "Напишите /start чтобы выйти в главное меню\n\n")
+                settings_info = self.db.get_user_settings(message.from_user.id)
+                print(settings_info)
+                if settings_info:
+                    self.bot.send_message(message.chat.id, f"Ваши настройки сечас\n"
+                                                           f"Координаты - {settings_info['coordinates']}\n"
+                                                           f"Разброс в метрах - {settings_info['raszbros']}")
                 to_register = self.bot.send_message(message.chat.id,
-                                                    "Вы зашли в меню настройки изменения координат в метаданных\n"
-                                                    "Напишите /start чтобы выйти в главное меню\n\n"
+                                                    "Если вы хотите изменить/задать настройки\n\n"
                                                     "Напишите сначала исходные координаты потом разброс\n\n"
                                                     "Пример:\n"
                                                     "(55.0, 40.0, 51.64)_(37.0, 8.0, 15.02)_25\n"
@@ -83,7 +93,9 @@ class Bot:
                                                     "процесс настройке гараздо легче.")
                 self.bot.register_next_step_handler(to_register,
                                                     make_settings)  # waiting for next message with settings
-                                                                    # messsage with setting is processed in make_settings()
+                # messsage with setting is processed in make_settings()
+
+        self.bot.polling()
 
 
 if __name__ == '__main__':

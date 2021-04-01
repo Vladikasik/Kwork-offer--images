@@ -16,8 +16,8 @@
         "balance": 1,
         "settings": {
             "gps": {
-                "coordinates": "(55.0, 40.0, 51.64) (37.0, 8.0, 15.02)",
-                "raszbros": 15
+                "coordinates": "(1) (1)",
+                "raszbros": "1"
             }
         }
     }
