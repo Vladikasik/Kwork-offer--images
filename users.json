@@ -1,0 +1,24 @@
+[
+    {
+        "id": 1,
+        "name": "test",
+        "balance": 1,
+        "settings": {
+            "gps": {
+                "type": "random",
+                "data": "15"
+            }
+        }
+    },
+    {
+        "id": 489989504,
+        "name": "Vlad Ainshtein",
+        "balance": 1,
+        "settings": {
+            "gps": {
+                "type": "exact",
+                "data": "(55.0, 40.0, 51.64) (37.0, 8.0, 15.02)"
+            }
+        }
+    }
+]

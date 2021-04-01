@@ -1,6 +1,6 @@
 from exif import Image
 from log_all import Loger
-import math
+from GpsEditor import GPS
 
 
 class ImageEditor:

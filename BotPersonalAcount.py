@@ -1,6 +1,7 @@
 import telebot
 import config
 from telebot import types
+from DatabaseConfig import Database
 
 
 class Bot:
@@ -8,33 +9,37 @@ class Bot:
     def __init__(self):
 
         self.bot = telebot.TeleBot(config.token)
-
-        self.main_message = {}
-        self.settings = {}
-
-        self.main_menu_keyboard = types.InlineKeyboardMarkup(row_width=1)
-        self.main_menu_keyboard.add(types.InlineKeyboardButton(text='Изменить данные фотографии',
-                                                               callback_data='change_photo'),
-                                    types.InlineKeyboardButton(text='Баланс',
-                                                               callback_data='balance'))
-
-        self.back_button_keyboard = types.InlineKeyboardMarkup(row_width=1)
-        self.back_button_keyboard.add(types.InlineKeyboardButton(text='⬅Вернуться в главное меню',
-                                                                 callback_data='back_to_main'))
+        self.db = Database()
 
     def mainloop(self):
 
-        @self.bot.message_handler(commands=['start', 'help', 'id'])
+        @self.bot.message_handler(commands=['start', 'help', 'balance', 'settings'])
         def send_welcome(message):
             if message.text == "/start":
+                if message.from_user.id not in self.db.get_all_ids():
+                    name = message.from_user.first_name + ' ' + message.from_user.last_name
+                    self.db.create_user(message.from_user.id, name, 1)
                 self.bot.send_message(message.chat.id, "Здравствуйте, рады привествовать вас в боте!")
                 self.bot.send_message(message.chat.id,
-                                      "Управляйте бот кнопками\n"
-                                      "Всё интуитивно понятно\n"
-                                      "Если возникли вопросы напишите /help",
-                                      reply_markup=self.main_menu_keyboard)
+                                      "/photo - для изменения данных о фотографии\n"
+                                      "/balance - баланс и пополнение\n"
+                                      "/settings - изменение настроек по умолчанию")
             elif message.text == "/help":
                 self.bot.send_message(message.chat.id, "Если есть вопросы/предложения, пешите @vladislav_ain")
+            elif message.text == '/balance':
+                self.bot.send_message(message.chat.id, "Информация о балансе\n"
+                                                       f"На вашем счету {self.db.get_balance(message.from_user.id)} токенов\n"
+                                                       "И тут какая-то муть с пополнением")
+            elif message.text == '/settings':
+                to_register = self.bot.send_message(message.chat.id,
+                                                    "Вы зашли в меню настройки изменения координат в метаданных\n"
+                                                    "Напишите /start чтобы выйти в главное меню\n\n"
+                                                    "Напишите 1 если вы хотите указать предел разброса координат\n"
+                                                    "Напишите 2 если вы хотите указать конкретные координаты\n\n"
+                                                    "Всё что вы сейчас настроите, будет применятся ко всем "
+                                                    "фотографиям, пока вы снова не поменяете настройки")
+                self.db.write_settings_exact(message.from_user.id, coordinates=None)
+                self.bot.register_next_step_handler(to_register)
 
         @self.bot.callback_query_handler(func=lambda call: True)
         def buttons(call):
