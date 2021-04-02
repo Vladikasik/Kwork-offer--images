@@ -17,6 +17,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\GpsEditor.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\PhotoDataChanger.py">
           <value>
             <Attribute>

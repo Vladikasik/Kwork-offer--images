@@ -5,6 +5,7 @@ from DatabaseConfig import Database
 from GpsEditor import GPS
 from PhotoDataChanger import ImageEditor
 
+
 class Bot:
 
     def __init__(self):
@@ -23,24 +24,20 @@ class Bot:
             if message.text != '/start':  # to let people exit from settings
                 # trying to check all the requirements for params
                 if len(params) == 3:
-                    if params[0].startswith('(') and params[0].endswith(')') \
-                            and params[1].startswith('(') and params[1].endswith(')'):
-                        if params[2].isdigit():
-                            coordinates = params[0] + '_' + params[1]
-                            self.db.write_settings_exact(message.from_user.id, coordinates,
-                                                         params[2])  # params[2] is metres
-                            self.bot.send_message(message.chat.id, "Мы записали ваши настройки\n"
-                                                                   "Нажмите или напишите /start чтобы перейти в главное меню")
-                        else:
-                            msg = self.bot.send_message(message.chat.id, "Мне кажется вы ввели что-то неправильно\n"
-                                                                         "Кажется разброс в метрах вы указали не как число\n"
-                                                                         "Попробуйте ещё раз")
-                            self.bot.register_next_step_handler(msg, make_settings)  # recursion
+                    try:
+                        are_degrees = float(params[0]) and float(params[1])
+                    except:
+                        are_degrees = False
+                    if are_degrees and params[2].isdigit():
+                        coordinates = params[0] + '_' + params[1]
+                        self.db.write_settings_exact(message.from_user.id, coordinates,
+                                                     params[2])  # params[2] is metres
+                        self.bot.send_message(message.chat.id, "Мы записали ваши настройки\n"
+                                                               "Нажмите или напишите /start чтобы перейти в главное меню")
                     else:
                         msg = self.bot.send_message(message.chat.id, "Мне кажется вы ввели что-то неправильно\n"
-                                                                     "Проверьте в каком формате вы ввели координаты\n"
                                                                      "Попробуйте ещё раз")
-                        self.bot.register_next_step_handler(msg, make_settings)  # recursion
+                        self.bot.register_next_step_handler(msg, make_gps)
                 else:
                     msg = self.bot.send_message(message.chat.id, "Мне кажется вы ввели что-то неправильно\n"
                                                                  "Проверьте что вы разделили все 3 параметра "
@@ -51,12 +48,14 @@ class Bot:
                 send_welcome(message)
 
         def edit_and_send_photo(message):
+            print(self.query[message.from_user.id])
             print(message.document)
             file_id_info = self.bot.get_file(message.document.file_id)
             downloaded_file = self.bot.download_file(file_id_info.file_path)
             with open(str(message.document.file_name), 'wb') as file:
                 file.write(downloaded_file)
-
+            editor = ImageEditor(str(message.document.file_name), self.query[message.from_user.id])
+            editor.edit_image()
 
         def make_photo(message):
             if message.text.startswith('+') or message.text.startswith('-'):
@@ -66,7 +65,7 @@ class Bot:
                     is_plus = splited[0][:1] == '+'
                     self.query[message.from_user.id]["time"] = [edit_to, is_plus]
                     photo_wait = self.bot.send_message(message.chat.id, "Все настройки заполнены!\n"
-                                                       "Теперь пришлите фото которое вы хотите изменить")
+                                                                        "Теперь пришлите фото которое вы хотите изменить")
                     self.bot.register_next_step_handler(photo_wait, edit_and_send_photo)
                 else:
                     msg = self.bot.send_message(message.chat.id, "Вы неправильно ввели изменение времени\n"
@@ -122,9 +121,9 @@ class Bot:
                                                     "Если вы хотите изменить/задать настройки\n\n"
                                                     "Напишите сначала исходные координаты потом разброс\n\n"
                                                     "Пример:\n"
-                                                    "(55.0, 40.0, 51.64)_(37.0, 8.0, 15.02)_25\n"
-                                                    "где (55.0, 40.0, 51.64) широта\n"
-                                                    "где (37.0, 8.0, 15.02) долгота\n"
+                                                    "55.7522200_37.6155600_25\n"
+                                                    "где 55.7522200 широта\n"
+                                                    "где 37.6155600 долгота\n"
                                                     "где 25 это разброс в метрах\n\n"
                                                     "Пожалуйста, проверьте ещё раз ваше сообщение перед отправлением, "
                                                     "если вы что-либо заполнили неправильно, при отправке фотографии, "
@@ -145,11 +144,9 @@ class Bot:
                 if self.db.get_balance(message.from_user.id) > 0:
                     if settings_info:
                         data = self.db.get_user_settings(message.from_user.id)
-                        pre_coordinates = data['coordinates']
+                        coordinates = data['coordinates']
                         metres = data['raszbros']
                         try:
-                            coordinates = [tuple([float(i) for i in i.replace('(', '').replace(')', '').split(', ')])
-                                           for i in pre_coordinates.split('_')]
                             gps = GPS(coordinates, metres)
                             new_one = gps._edit()
                             self.query[message.from_user.id] = {"gps": new_one}
@@ -169,6 +166,7 @@ class Bot:
                                                                          "для корректной работы программы")
                             self.bot.register_next_step_handler(msg, make_photo)
                         except Exception as ex:
+                            print(ex)
                             self.bot.send_message(message.chat.id, "Проболема в считывании координат, "
                                                                    "скорее всего вы где-то ошиблись.\n"
                                                                    "Попробуйте заново настроить gps\n"

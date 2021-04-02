@@ -7,9 +7,9 @@ class TimeEditor:
 
         self.start_time = datetime.strptime(str_time, '%Y:%m:%d %H:%M:%S')
         if not plus:
-            exit_time = self.start_time - datetime.timedelta(minutes=minutes)
+            exit_time = self.start_time - timedelta(minutes=minutes)
         else:
-            exit_time = self.start_time + datetime.timedelta(minutes=minutes)
+            exit_time = self.start_time + timedelta(minutes=minutes)
 
         self.exit_str = exit_time.strftime('%Y:%m:%d %H:%M:%S')
 

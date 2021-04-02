@@ -1,6 +1,7 @@
 from exif import Image
 from log_all import Loger
 from GpsEditor import GPS
+from TimeEditor import TimeEditor
 
 
 class ImageEditor:
@@ -11,27 +12,30 @@ class ImageEditor:
         self.log.welcome()  # logging about program start
 
         self.filename = filename
-        self.query = query_edit
 
-        self.edit_time = None
-        self.edit_gps = None
+        self.edit_minutes = query_edit['time']
+        self.new_coordinates = query_edit['gps']
+        self.new_time = None
 
     # first and main function
-    def _edit_image(self):
+    def edit_image(self):
 
         self.log.start_edit(self.filename)  # logging about edit start
 
-        if not self.query:  # if class were created without query what to edit
-            self.log.no_arg(self.filename)
-            self._return_error(answer='NoQuery')
-            return  # exiting func after logging exception
-
-        try:
-            image_data = self._image_data()
-            self.log.loaded(self.filename)
-            
-        except Exception as ex:  # if something wrong with loading image
-            self._return_error(answer=str(ex))
+        image_data = self._image_data()
+        self.log.loaded(self.filename)
+        time_editor = TimeEditor(image_data.datetime, self.edit_minutes[0], self.edit_minutes[1])
+        self.new_time = time_editor.get_exit_str()
+        print(image_data.datetime)
+        print(self.new_time)
+        # try:
+        #     image_data = self._image_data()
+        #     self.log.loaded(self.filename)
+        #     time_editor = TimeEditor(image_data.datetime, self.edit_minutes[0], self.edit_minutes[1])
+        #     self.new_time = time_editor.get_exit_str()
+        #     print(self.new_time)
+        # except Exception as ex:  # if something wrong with loading image
+        #     self._return_error(answer=str(ex))
 
     # load image + get metadate
     def _image_data(self):
@@ -46,19 +50,15 @@ class ImageEditor:
         exit_str = ''
         for i in image_data.list_all():
             try:  # it a[1] value
-                exit_str += str(i) + ':' + str(image_data[i]) + '\n'
+                exit_str += str(i) + ':' + str(image_data[i]) + '[i]' +'\n'
             except:
                 try:  # it also can be a.1 value
                     exit_str += str(i) + ':' + str(image_data.i) + '\n'
                 except:  # idk what to do then
                     exit_str += str(i) + ':' + 'cannot get it' + '\n'
         #  write all the data to txt file to watch it then
-        with open('all_data.txt', 'w') as f:
-            f.write(exit_str)
+        print(exit_str)
 
     def _return_error(self, answer):
         print(f'Here is error {answer}')  # TODO replace with error image with explonation
 
-if __name__ == '__main__':
-    changer = ImageEditor('my_test1.JPG')
-    changer._test_print_values(changer._image_data())
