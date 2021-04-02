@@ -20,14 +20,25 @@ class ImageEditor:
     # first and main function
     def edit_image(self):
 
-        self.log.start_edit(self.filename)  # logging about edit start
+        try:
+            self.log.start_edit(self.filename)  # logging about edit start
 
-        image_data = self._image_data()
-        self.log.loaded(self.filename)
-        time_editor = TimeEditor(image_data.datetime, self.edit_minutes[0], self.edit_minutes[1])
-        self.new_time = time_editor.get_exit_str()
-        print(image_data.datetime)
-        print(self.new_time)
+            image_data = self._image_data()
+            self.log.loaded(self.filename)
+            time_editor = TimeEditor(image_data.datetime, self.edit_minutes[0], self.edit_minutes[1])
+            self.new_time = time_editor.get_exit_str()
+            image_data.datetime = self.new_time
+            image_data.datetime_original = self.new_time
+            image_data.datetime_degitized = self.new_time
+            lat = eval(self.new_coordinates[0].replace('°', ', ').replace("'", ', '))
+            long = eval(self.new_coordinates[1].replace('°', ', ').replace("'", ', '))
+            image_data.gps_latitude = lat
+            image_data.gps_longitude = long
+
+            with open(self.filename, 'wb') as file:
+                file.write(image_data.get_file())
+        except:
+            pass
         # try:
         #     image_data = self._image_data()
         #     self.log.loaded(self.filename)
@@ -53,9 +64,9 @@ class ImageEditor:
                 exit_str += str(i) + ':' + str(image_data[i]) + '[i]' +'\n'
             except:
                 try:  # it also can be a.1 value
-                    exit_str += str(i) + ':' + str(image_data.i) + '\n'
-                except:  # idk what to do then
-                    exit_str += str(i) + ':' + 'cannot get it' + '\n'
+                    exit_str += str(i) + ':' + str(image_data.i) + '.i' + '\n'
+                except Exception as ex:  # idk what to do then
+                    exit_str += str(i) + ':' + str(ex) + '\n'
         #  write all the data to txt file to watch it then
         print(exit_str)
 

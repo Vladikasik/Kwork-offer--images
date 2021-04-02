@@ -27,8 +27,8 @@ class GPS:
         latitude_new_deg = latitude + x_1 * 0.000008984
         longitude_new_deg = longitude + x_2 * 0.000008998
 
-        latitude_exit = to_str_dec_deg(latitude_new_deg)
-        longitude_exit = to_str_dec_deg(longitude_new_deg)
+        latitude_exit = to_str_deg_min_sec(latitude_new_deg)
+        longitude_exit = to_str_deg_min_sec(longitude_new_deg)
 
         exit_list = [latitude_exit[:-1], longitude_exit[:-1]]
         return exit_list
