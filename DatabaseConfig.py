@@ -16,7 +16,8 @@ class Database:
     def create_user(self, user_id, name, start_balance):
         user = {"id": user_id,
                 "name": name,
-                "balance": start_balance}
+                "balance": start_balance,
+                "settings": {}}
 
         data = self._get_data()
         data.append(user)
