@@ -3,14 +3,16 @@ from datetime import datetime, timedelta
 
 class TimeEditor:
 
-    def __init__(self, str_time, seconds, plus=True):
+    def __init__(self, str_time, minutes, plus=True):
 
         self.start_time = datetime.strptime(str_time, '%Y:%m:%d %H:%M:%S')
         if not plus:
-            exit_time = self.start_time - datetime.timedelta(seconds=seconds)
+            exit_time = self.start_time - datetime.timedelta(minutes=minutes)
         else:
-            exit_time = self.start_time + datetime.timedelta(seconds=seconds)
+            exit_time = self.start_time + datetime.timedelta(minutes=minutes)
 
-        exit_str = exit_time.strftime('%Y:%m:%d %H:%M:%S')
+        self.exit_str = exit_time.strftime('%Y:%m:%d %H:%M:%S')
 
-        return exit_str
+    def get_exit_str(self):
+
+        return self.exit_str

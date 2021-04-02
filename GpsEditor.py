@@ -37,7 +37,7 @@ class GPS:
 
     def _to_str(self, string):
         string = string.split()
-        degr = '(' + string[0].replace('°', '') + '.0 '
-        minu = string[1].replace("'", '') + '.0 '
+        degr = '(' + string[0].replace('°', '') + '.0, '
+        minu = string[1].replace("'", '') + '.0, '
         secu = string[2].replace('"', '') + ')'
         return degr + minu + secu

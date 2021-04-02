@@ -3,7 +3,7 @@ import config
 from telebot import types
 from DatabaseConfig import Database
 from GpsEditor import GPS
-
+from PhotoDataChanger import ImageEditor
 
 class Bot:
 
@@ -11,6 +11,8 @@ class Bot:
 
         self.bot = telebot.TeleBot(config.token)
         self.db = Database()
+
+        self.query = {}
 
     def mainloop(self):
 
@@ -46,10 +48,23 @@ class Bot:
                                                                  "Попробуйте ещё раз")
                     self.bot.register_next_step_handler(msg, make_settings)  # recursion
 
+        def edit_and_send_photo(message):
+            print(message.document)
+            file_id_info = self.bot.get_file(message.document.file_id)
+            downloaded_file = self.bot.download_file(file_id_info.file_path)
+            with open(str(message.document.file_name), 'wb') as file:
+                file.write(downloaded_file)
+
         def make_photo(message):
             if message.text.startswith('+') or message.text.startswith('-'):
-                if len(message.text.split(' ')) == 3:
-                    edit_to =
+                splited = message.text.split(' ')
+                if len(splited) == 3:
+                    edit_to = int(splited[0][1:]) * 1440 + int(splited[1]) * 60 + int(splited[2])
+                    is_plus = splited[0][:1] == '+'
+                    self.query[message.from_user.id]["time"] = [edit_to, is_plus]
+                    photo_wait = self.bot.send_message(message.chat.id, "Все настройки заполнены!\n"
+                                                       "Теперь пришлите фото которое вы хотите изменить")
+                    self.bot.register_next_step_handler(photo_wait, edit_and_send_photo)
                 else:
                     msg = self.bot.send_message(message.chat.id, "Вы неправильно ввели изменение времени\n"
                                                                  "Данный параметр разделен на 3 пункта ПРОБЕЛАМИ\n"
@@ -133,6 +148,11 @@ class Bot:
                             coordinates = [tuple([float(i) for i in i.replace('(', '').replace(')', '').split(', ')])
                                            for i in pre_coordinates.split('_')]
                             gps = GPS(coordinates, metres)
+                            new_one = gps._edit()
+                            self.query[message.from_user.id] = {"gps": new_one}
+                            self.bot.send_message(message.chat.id, f"Ваши сгенерированные координаты:\n"
+                                                                   f"{new_one[0]}\n"
+                                                                   f"{new_one[1]}")
                             msg = self.bot.send_message(message.chat.id, "Осталось совсем чуть-чуть\n"
                                                                          "Просто введите как вы хотите изменить время\n\n"
                                                                          "Пример\n"
