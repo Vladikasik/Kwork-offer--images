@@ -28,9 +28,8 @@ class ImageEditor:
 
         try:
             image_data = self._image_data()
-            image_data = self._edit_gps(image_data)
             self.log.loaded(self.filename)
-            pass
+            
         except Exception as ex:  # if something wrong with loading image
             self._return_error(answer=str(ex))
 
@@ -41,10 +40,6 @@ class ImageEditor:
             image_data = Image(image_file)  # getting data via library
 
         return image_data
-
-    def _edit_gps(self, image_data):
-
-        image_data.edit_gps
 
     # just print value_name:value_value
     def _test_print_values(self, image_data):

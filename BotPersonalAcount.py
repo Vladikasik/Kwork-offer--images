@@ -57,6 +57,7 @@ class Bot:
             with open(str(message.document.file_name), 'wb') as file:
                 file.write(downloaded_file)
 
+
         def make_photo(message):
             if message.text.startswith('+') or message.text.startswith('-'):
                 splited = message.text.split(' ')
