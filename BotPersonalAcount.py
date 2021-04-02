@@ -46,7 +46,7 @@ class Bot:
                                                                  "Проверьте что вы разделили все 3 параметра "
                                                                  "нижним подчеркиванием '_'\n"
                                                                  "Попробуйте ещё раз")
-                    self.bot.register_next_step_handler(msg, make_settings)  # recursion
+                    self.bot.register_next_step_handler(msg, make_gps)  # recursion
 
         def edit_and_send_photo(message):
             print(message.document)
