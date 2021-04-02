@@ -47,6 +47,8 @@ class Bot:
                                                                  "нижним подчеркиванием '_'\n"
                                                                  "Попробуйте ещё раз")
                     self.bot.register_next_step_handler(msg, make_gps)  # recursion
+            else:
+                send_welcome(message)
 
         def edit_and_send_photo(message):
             print(message.document)
