@@ -55,7 +55,9 @@ class Bot:
             with open(str(message.document.file_name), 'wb') as file:
                 file.write(downloaded_file)
             editor = ImageEditor(str(message.document.file_name), self.query[message.from_user.id])
-            editor.edit_image()
+            answer = editor.edit_image()
+            if answer is not False:
+                self.bot.send_document(message.chat.id, open(answer, 'rb'))
 
         def make_photo(message):
             if message.text.startswith('+') or message.text.startswith('-'):

@@ -37,8 +37,10 @@ class ImageEditor:
 
             with open(self.filename, 'wb') as file:
                 file.write(image_data.get_file())
+
+            return self.filename
         except:
-            pass
+            return False
         # try:
         #     image_data = self._image_data()
         #     self.log.loaded(self.filename)
